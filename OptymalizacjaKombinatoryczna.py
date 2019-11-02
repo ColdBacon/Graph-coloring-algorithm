@@ -1,3 +1,4 @@
+
 txt=[]      #dane wejściowe z pliku
 tablica=[]  #zmiana na int wyjsciowego pliku
 slownik={}  #wierzcholek:kolor
