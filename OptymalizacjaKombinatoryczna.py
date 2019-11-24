@@ -36,7 +36,7 @@ def kolorowanie(macierz_polaczen,lista_krawedzi):
     return slownik_kolorow
 
 def losowanie_liczb(n):
-    lista_losowa=[i for i in range(n)]
+    lista_losowa=[i for i in range(1,n+1)]
     permutacja=list(permutations(lista_losowa))
     a=random.randint(0,len(permutacja))
     return permutacja[a]
