@@ -2,14 +2,13 @@ import random,math
 
 file = open("proba.txt","w")
 #ilosc_wierzcholkow=random.randint(5,10)
-ilosc_wierzcholkow=15
+ilosc_wierzcholkow=150
+gestosc=0.3
 matryca=[[0 for x in range(ilosc_wierzcholkow)]for y in range(ilosc_wierzcholkow)]
 for x in range(ilosc_wierzcholkow-1):
     matryca[x][x+1]=1
     matryca[x+1][x]=1
-ilosc_krawedzi=math.floor(((ilosc_wierzcholkow*(ilosc_wierzcholkow-1))/2*0.4)-ilosc_wierzcholkow+1)
-for x in matryca:
-    print(x)
+ilosc_krawedzi=math.floor(((ilosc_wierzcholkow*(ilosc_wierzcholkow-1))/2*gestosc)-ilosc_wierzcholkow+1)
 print(ilosc_krawedzi)
 while(ilosc_krawedzi>0):
     x=random.randint(0,ilosc_wierzcholkow-1)
