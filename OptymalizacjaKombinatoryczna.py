@@ -1,3 +1,4 @@
+
 #!/usr/bin/python3
 import random
 from itertools import permutations
@@ -78,4 +79,3 @@ MAX  = 10 #limit of the iterations
     #s_best = s
 
     #while (f_best > 0 and NB < MAX):
-        
