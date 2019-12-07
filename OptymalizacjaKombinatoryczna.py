@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 import random
 from itertools import permutations
+import module_graph as grafy
+
 txt=[]      #dane wejściowe z pliku
 tablica=[]  #zmiana na int wyjsciowego pliku
 slownik={}  #wierzcholek:kolor
-slownik_2={}
 n=0         #ilosc wierzcholkow
 lista_posortowanych=[]
 plik_z_krawedziami='graff0.3.txt'
@@ -54,10 +55,6 @@ with open(plik_z_krawedziami) as plik:
             for x in linia.strip().split():
                 n=int(x)
 
-for i in range(n):
-    slownik[i+1]=-1
-    slownik_2[i+1]=-1
-
 for [x,y] in txt:
     y=int(y)
     x=int(x)
@@ -87,14 +84,21 @@ liczba_kolorow = max_slownik(slownik_2)
 print("Ilosc kolorow: ",liczba_kolorow)
 
 
-
-
+#zachlanny ulepszony, użycie Graf.py
+print(40*"-")
+graf2 = grafy.Graf(tablica,lista_1_do_n)
+graf1 = grafy.Graf(tablica,lista_posortowanych)
+print(graf1.slownik_wierzcholkow)
+print("Ilosc kolorow: ",graf1.max_z_slownika())
+print("wszystkie slowniki: ",grafy.Graf.lista_grafow)
+grafy.Graf.sortowanie_populacji()
+print("wszystkie slowniki: ",grafy.Graf.lista_grafow)
+grafy.Graf.odrzucanie_populacji()
+print("wszystkie slowniki: ",grafy.Graf.lista_grafow)
 
 
 M = [[0 for i in range(n)] for j in range(n)] #tabu matrix
 slownik_LF=kolorowanie(tablica,lista_posortowanych)
-
-print(lista_kolorow(slownik_2))
 
 NB = 0
 s = slownik_2 #initial confugiration generated with a greedy algorithm
