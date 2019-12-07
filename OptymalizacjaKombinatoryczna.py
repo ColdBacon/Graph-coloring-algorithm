@@ -73,9 +73,6 @@ s = graf1.slownik_kolorow #initial confugiration generated with a greedy algorit
 NC = grafy.max_slownik(grafy.Graf.lista_grafow[0]) - 1      #wczesniej trzeba posortowac lista_grafow
 MAX  = 10 #limit of the iterations
 
-print("Hello World")
-print("Hello Bogusia")
-
 #deklarowanie zmiennnych globalnych na górze!!!
 
 #while (NB<MAX):
