@@ -1,11 +1,6 @@
 #!/usr/bin/python3
-
-def max_slownik(slownik):      #zwraca ilosc kolorow
-    maxi=0
-    for x in slownik.values():
-        if x>maxi:
-            maxi=x
-    return maxi
+from itertools import permutations
+import random
 
 class Graf:         #klasa graf przechowuje pokolorowane wierzcholki grafu
 
@@ -36,12 +31,12 @@ class Graf:         #klasa graf przechowuje pokolorowane wierzcholki grafu
             self.macierz = macierz
             self.ilosc_bledow = 0
             self.slownik_kolorow = self.kolorowanie(lista_wierzcholkow)      #kolorowanie grafu, slownik {wierzcholek:kolor}
-            Graf.lista_grafow.append(self.slownik_kolorow) #dodawanie slownikow do listy
+            Graf.lista_grafow.append(self) #dodawanie slownikow do listy
         elif(lista_wierzcholkow == None):
             self.macierz = macierz
             self.slownik_kolorow = slownik_kolorow
             self.ilosc_bledow = self.szukanie_bledow
-            Graf.lista_grafow.append(self.slownik_kolorow)
+            Graf.lista_grafow.append(self)
 
     def szukanie_bledow(self):
         licznik = 0
@@ -49,17 +44,26 @@ class Graf:         #klasa graf przechowuje pokolorowane wierzcholki grafu
             if (self.slownik_kolorow[x] == self.slownik_kolorow[y]):
                 licznik+=1
         return licznik
-
-    @staticmethod
-    def odrzucanie_populacji():
-        Graf.lista_grafow = Graf.lista_grafow[0:len(Graf.lista_grafow)//2]
     
+    @staticmethod
+    def max_slownik(graf1):      #zwraca ilosc kolorow
+        maxi=0
+        for x in graf1.slownik_kolorow.values():
+            if x>maxi:
+                maxi=x
+        return maxi
+
     @staticmethod 
     def sortowanie_populacji():
-        Graf.lista_grafow.sort(key=max_slownik)
+        Graf.lista_grafow.sort(key=Graf.max_slownik)
 
     @staticmethod
-    def krzyzowanie(graf1,graf2):
+    def odrzucanie_populacji(wspolczynnik):                                                #odrzucamy w zaleznosci od wspolczynnika
+        Graf.sortowanie_populacji()
+        Graf.lista_grafow = Graf.lista_grafow[0:round(len(Graf.lista_grafow)*(1-wspolczynnik))]
+
+    @staticmethod
+    def krzyzowanie(graf1,graf2):                   #metoda krzyzujaca dwa 
         slownik= {}
         for x in range(1,len(graf1.slownik_kolorow)+1):
             if(x<(len((graf1.slownik_kolorow))//2)+1):
@@ -68,3 +72,13 @@ class Graf:         #klasa graf przechowuje pokolorowane wierzcholki grafu
                 slownik[x] = graf2.slownik_kolorow[x]
         nowy_graf = Graf(macierz = graf1.macierz,slownik_kolorow=slownik)
         nowy_graf.ilosc_bledow()
+    
+    def mutacja(self):
+        lista_z_kolorami = []                           #lista przechowuje kolory ktore musi permutowac
+        for x in self.slownik_kolorow.values():
+            lista_z_kolorami.append(x)
+        permutacje = list(permutations(lista_z_kolorami))
+        a = random.randint(0,len(permutacje))
+        lista_z_kolorami = permutacje[a]
+        for x in range(len(lista_z_kolorami)):
+            self.slownik_kolorow[x+1] = lista_z_kolorami[x]

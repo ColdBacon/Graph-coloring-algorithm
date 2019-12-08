@@ -10,7 +10,11 @@ slownik={}  #wierzcholek:kolor
 n=0         #ilosc wierzcholkow
 lista_posortowanych=[]
 plik_z_krawedziami='graff0.3.txt'
-szansa_mutacji = 0.01
+szansa_mutacji = 0.02
+szansa_krzyzowanie = 0.5
+MAX  = 10 #limit of the iterations
+populacja_poczatkowa = 10 #ilosc osobnikow w populacji losowej
+NC = 0      #najlepsza wartosc jaka chcemy osiagnac
 
 def losowanie_listy_wierzcholkow(n):                         #zwraca liste z losowa kolejnoscia wierzcholkow
     lista_losowa=[i for i in range(1,n+1)]
@@ -55,28 +59,43 @@ for x in posortowane_wierzcholki:
 print(40*"-")
 graf2 = grafy.Graf(macierz = tablica,lista_wierzcholkow = lista_1_do_n)
 graf1 = grafy.Graf(macierz = tablica,lista_wierzcholkow = lista_posortowanych)
-print("Ilosc kolorow: ",grafy.max_slownik(graf2.slownik_kolorow))
+print("Ilosc kolorow: ",grafy.Graf.max_slownik(graf2))
 '''print("wszystkie slowniki: ",grafy.Graf.lista_grafow)
 grafy.Graf.sortowanie_populacji()
 print("wszystkie slowniki: ",grafy.Graf.lista_grafow)
 grafy.Graf.odrzucanie_populacji()
 print("wszystkie slowniki: ",grafy.Graf.lista_grafow)'''
 grafy.Graf.krzyzowanie(graf1,graf2)
+grafy.Graf.sortowanie_populacji()
 for x in grafy.Graf.lista_grafow:
-    print(x)
+    print(x.slownik_kolorow)
     print(40*"-")
+
+print("cokolwiek ",grafy.Graf.lista_grafow[0].slownik_kolorow)
 
 M = [[0 for i in range(n)] for j in range(n)] #tabu matrix
 
 NB = 0
 s = graf1.slownik_kolorow #initial confugiration generated with a greedy algorithm
-NC = grafy.max_slownik(grafy.Graf.lista_grafow[0]) - 1      #wczesniej trzeba posortowac lista_grafow
 MAX  = 10 #limit of the iterations
 
 print("Hello World")
 print("Hello Bogusia")
 
 #deklarowanie zmiennnych globalnych na górze!!!
+
+#cialo algorytmu genetycznego
+for i in range(populacja_poczatkowa):
+    lista_z_wierzcholkami = losowanie_listy_wierzcholkow(n)                         #losowanie kolejnosci w ktorej maja byc pokolorowane wierzcholki
+    graf = grafy.Graf(macierz = tablica, lista_wierzcholkow = lista_z_wierzcholkami)#inicjalizacja nowego grafu
+grafy.Graf.odrzucanie_populacji(0.2)        #sortowanie populacji jest zapewnione poprzez wywolanie funkcji sortowanie_populacji wewnatrz odrzucanie_populacji
+
+NC = grafy.Graf.max_slownik(grafy.Graf.lista_grafow[0]) - 1  
+
+while(NB<MAX or NC>=grafy.Graf.max_slownik(grafy.Graf.lista_grafow[0])):        #petla konczy sie po wykonaniu MAX ieracji lub po osiagnieciu celu
+    lista_1_do_ilosc_grafow = [i for i in range(len(grafy.Graf.lista_grafow))]
+    
+    NB+=1
 
 #while (NB<MAX):
     #s_best = s
