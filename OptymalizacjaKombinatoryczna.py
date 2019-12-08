@@ -79,6 +79,9 @@ NB = 0
 s = graf1.slownik_kolorow #initial confugiration generated with a greedy algorithm
 MAX  = 10 #limit of the iterations
 
+print("Hello World")
+print("Hello Bogusia")
+
 #deklarowanie zmiennnych globalnych na górze!!!
 
 #cialo algorytmu genetycznego
