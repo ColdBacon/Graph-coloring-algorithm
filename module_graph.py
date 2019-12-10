@@ -30,22 +30,35 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
     def __init__(self, macierz, lista_wierzcholkow=None, slownik_kolorow=None):  # inicjalizacja grafu
         if (slownik_kolorow == None):
             self.macierz = macierz
-            self.ilosc_bledow = 0
-            self.slownik_kolorow = self.kolorowanie(
-                lista_wierzcholkow)  # kolorowanie grafu, slownik {wierzcholek:kolor}
+            self.lista_bledow = []
+            self.slownik_kolorow = self.kolorowanie(lista_wierzcholkow)  # kolorowanie grafu, slownik {wierzcholek:kolor}
             Graf.lista_grafow.append(self)  # dodawanie slownikow do listy
         elif (lista_wierzcholkow == None):
             self.macierz = macierz
             self.slownik_kolorow = slownik_kolorow
-            self.ilosc_bledow = self.szukanie_bledow
+            self.lista_bledow = self.szukanie_bledow
             Graf.lista_grafow.append(self)
 
     def szukanie_bledow(self):
-        licznik = 0
+        lista_blednych = []
         for [x, y] in self.macierz:
+            if (x not in lista_blednych or y not in lista_blednych):
+                continue
             if (self.slownik_kolorow[x] == self.slownik_kolorow[y]):
-                licznik += 1
-        return licznik
+                lista_blednych.append(y)
+        return lista_blednych
+
+    def kolorowanie_jednego(self, wierzcholek):
+        lista_kolor = []
+        for [x, y] in self.macierz:
+            if (wierzcholek == x):
+                lista_kolor.append(self.slownik_kolorow[y])
+            elif (wierzcholek == y):
+                lista_kolor.append(self.slownik_kolorow[x])
+        lista_kolor.sort()
+        for i in range(1,len(lista_kolor)+1):
+            if (i not in lista_kolor):
+                self.slownik_kolorow[wierzcholek]=i
 
     @staticmethod
     def ilosc_kolorow(graf1):  # zwraca ilosc kolorow danego grafu
@@ -73,7 +86,7 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
             else:
                 slownik[x] = graf2.slownik_kolorow[x]
         nowy_graf = Graf(macierz=graf1.macierz, slownik_kolorow=slownik)
-        nowy_graf.ilosc_bledow()
+        return nowy_graf
 
     def mutacja(self):
         lista_z_kolorami = []  # lista przechowuje kolory ktore musi permutowac

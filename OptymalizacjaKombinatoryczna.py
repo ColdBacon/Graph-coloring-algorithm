@@ -15,6 +15,7 @@ MAX = 10  # limit of the iterations
 populacja_poczatkowa = 10  # ilosc osobnikow w populacji losowej
 NC = 0  # najlepsza wartosc jaka chcemy osiagnac
 NB = 0  # ilosc wykonanych iteracji
+wspolczynnik_odrzucenia = 0.2
 
 def losowanie_listy_wierzcholkow(n):  # zwraca liste z losowa kolejnoscia wierzcholkow
     lista_losowa = [i for i in range(1, n + 1)]
@@ -72,8 +73,6 @@ for x in grafy.Graf.lista_grafow:
     print("SLOWNIK KOLOROW: ",x.slownik_kolorow)
     print(40 * "-")
 
-M = [[0 for i in range(n)] for j in range(n)]  # tabu matrix
-
 s = graf1.slownik_kolorow  # initial confugiration generated with a greedy algorithm
 
 # cialo algorytmu genetycznego
@@ -83,10 +82,21 @@ for i in range(populacja_poczatkowa):
 grafy.Graf.odrzucanie_populacji(0.2)  # sortowanie populacji jest zapewnione poprzez wywolanie funkcji sortowanie_populacji wewnatrz odrzucanie_populacji
 
 NC = grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[0]) - 1
+for i in grafy.Graf.lista_grafow:
+    print("ILOSC KOLOROW: ",grafy.Graf.ilosc_kolorow(i))
 
-while (NB < MAX or NC >= grafy.Graf.ilosc_kolorow(
-        grafy.Graf.lista_grafow[0])):  # petla konczy sie po wykonaniu MAX ieracji lub po osiagnieciu celu
+while (NB < MAX or NC >= grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[0])):  # petla konczy sie po wykonaniu MAX ieracji lub po osiagnieciu celu
     lista_1_do_ilosc_grafow = [i for i in range(len(grafy.Graf.lista_grafow))]
+    M = [[random.randint(1,100) for i in range((len(grafy.Graf.lista_grafow)))] for j in range(len(grafy.Graf.lista_grafow))]
+    n = len(grafy.Graf.lista_grafow)
+
+    for i in range(n):
+        for j in range(n):
+            if (i != j and M[i][j]<=szansa_krzyzowanie*100):
+                nowy_graf = grafy.Graf.krzyzowanie(grafy.Graf.lista_grafow[i], grafy.Graf.lista_grafow[j])
+                if(random.randint(1,100)<=szansa_mutacji*100):
+                    nowy_graf.mutacja()
+
     NB += 1
 
 # while (NB<MAX):
