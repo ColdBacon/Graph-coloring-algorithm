@@ -8,10 +8,10 @@ tablica = []  # zmiana na int wyjsciowego pliku
 slownik = {}  # wierzcholek:kolor
 n = 0  # ilosc wierzcholkow
 lista_posortowanych = []
-plik_z_krawedziami = 'graff0.3.txt'
+plik_z_krawedziami = 'graph70.txt'
 szansa_mutacji = 0.02
-szansa_krzyzowanie = 0.5
-MAX = 10  # limit of the iterations
+szansa_krzyzowanie = 0.25
+MAX = 5  # limit of the iterations
 populacja_poczatkowa = 10  # ilosc osobnikow w populacji losowej
 NC = 0  # najlepsza wartosc jaka chcemy osiagnac
 NB = 0  # ilosc wykonanych iteracji
@@ -66,13 +66,13 @@ print("Ilosc kolorow dla listy posortowanej: ", grafy.Graf.ilosc_kolorow(graf1))
 grafy.Graf.sortowanie_populacji()
 print("wszystkie slowniki: ",grafy.Graf.lista_grafow)
 grafy.Graf.odrzucanie_populacji()
-print("wszystkie slowniki: ",grafy.Graf.lista_grafow)'''
-grafy.Graf.krzyzowanie(graf1, graf2)
+print("wszystkie slowniki: ",grafy.Graf.lista_grafow)
+nowy_graf = grafy.Graf.krzyzowanie(graf1, graf2)
 grafy.Graf.sortowanie_populacji()
 for x in grafy.Graf.lista_grafow:
     print("SLOWNIK KOLOROW: ",x.slownik_kolorow)
     print(40 * "-")
-
+'''
 s = graf1.slownik_kolorow  # initial confugiration generated with a greedy algorithm
 
 # cialo algorytmu genetycznego
@@ -86,20 +86,53 @@ for i in grafy.Graf.lista_grafow:
     print("ILOSC KOLOROW: ",grafy.Graf.ilosc_kolorow(i))
 
 while (NB < MAX or NC >= grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[0])):  # petla konczy sie po wykonaniu MAX ieracji lub po osiagnieciu celu
-    lista_1_do_ilosc_grafow = [i for i in range(len(grafy.Graf.lista_grafow))]
-    M = [[random.randint(1,100) for i in range((len(grafy.Graf.lista_grafow)))] for j in range(len(grafy.Graf.lista_grafow))]
-    n = len(grafy.Graf.lista_grafow)
+    #lista_1_do_ilosc_grafow = [i for i in range(len(grafy.Graf.lista_grafow))]
+    #M = [[random.randint(1,100) for i in range((len(grafy.Graf.lista_grafow)))] for j in range(len(grafy.Graf.lista_grafow))]
+    wierzcholek = random.randint(1,n)
+    wierzcholek2 = random.randint(1,n)
+    wierzcholek3 = random.randint(1,n)
+    wierzcholek4 = random.randint(1,n)
+    lol = len(grafy.Graf.lista_grafow)
+    print("wierz1",wierzcholek,"wierz2",wierzcholek2,"wierz3",wierzcholek3,"wierz4",wierzcholek4)
+    najlepsza_suma = grafy.Graf.lista_grafow[0].slownik_kolorow[wierzcholek] + grafy.Graf.lista_grafow[0].slownik_kolorow[wierzcholek2]
+    najlepsza_suma2 = grafy.Graf.lista_grafow[0].slownik_kolorow[wierzcholek3] + grafy.Graf.lista_grafow[0].slownik_kolorow[wierzcholek4]
+    najlepszy_graf = grafy.Graf.lista_grafow[0]
+    najlepszy_graf2 = grafy.Graf.lista_grafow[0]
 
+    for i in range(1,lol):
+        suma = grafy.Graf.lista_grafow[i].slownik_kolorow[wierzcholek] + grafy.Graf.lista_grafow[i].slownik_kolorow[wierzcholek2]
+        suma2 = grafy.Graf.lista_grafow[i].slownik_kolorow[wierzcholek3] + grafy.Graf.lista_grafow[i].slownik_kolorow[wierzcholek4]
+        if suma<najlepsza_suma:
+            najlepszy_graf = grafy.Graf.lista_grafow[i]
+            najlepsza_suma = suma
+        if suma2<najlepsza_suma2:
+            najlepszy_graf2 = grafy.Graf.lista_grafow[i]
+            najlepsza_suma2 = suma2
+
+    if najlepszy_graf != najlepszy_graf2:
+        nowy_graf = grafy.Graf.krzyzowanie(najlepszy_graf, najlepszy_graf2)
+        if (random.randint(1, 100) <= szansa_mutacji * 100):
+            nowy_graf.mutacja()
+            nowy_graf.szukanie_bledow()
+        nowy_graf = grafy.Graf.krzyzowanie(najlepszy_graf2, najlepszy_graf)
+        if (random.randint(1, 100) <= szansa_mutacji * 100):
+            nowy_graf.mutacja()
+            nowy_graf.szukanie_bledow()
+
+    """
     for i in range(n):
         for j in range(n):
             if (i != j and M[i][j]<=szansa_krzyzowanie*100):
                 nowy_graf = grafy.Graf.krzyzowanie(grafy.Graf.lista_grafow[i], grafy.Graf.lista_grafow[j])
                 if(random.randint(1,100)<=szansa_mutacji*100):
                     nowy_graf.mutacja()
-
+                    nowy_graf.szukanie_bledow()
+    """
+    grafy.Graf.odrzucanie_ilosci(20)
+    print("dlugosc listy: ",len(grafy.Graf.lista_grafow))
+    print("ilosc kolorow: ",grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[0]))
+    for i in range (5):
+        print("Graf nr: ",i,grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[i]),grafy.Graf.lista_grafow[i].slownik_kolorow)
     NB += 1
+    print("NB: ",NB)
 
-# while (NB<MAX):
-# s_best = s
-
-# while (f_best > 0 and NB < MAX):

@@ -8,23 +8,25 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
     lista_grafow = []  # lista przechowuje wszystkie pokolorowania (slowniki) w populacji (pole statyczne)
 
     def kolorowanie(self,lista_wierzcholkow):  # funkcja kolorujaca zachlannie i zwracajaca slownik {indeks_wierzcholka:numer_koloru}
-        lista_wychodzacych = []  # lista z wierzcholkami polaczonymi z jednym wierzcholkiem do którego dobieramy kolor
+        lista_kolorow_sasiadow = []  # lista z wierzcholkami polaczonymi z jednym wierzcholkiem do którego dobieramy kolor
         slownik_kolorow = {}
         for i in range(1, len(lista_wierzcholkow) + 1):
             slownik_kolorow[i] = 0
-        kolor = 0  # numery oznaczają kolory
         for i in lista_wierzcholkow:
             for [x, y] in self.macierz:
                 if x == i:
-                    lista_wychodzacych.append(y)
+                    lista_kolorow_sasiadow.append(slownik_kolorow[y])
                 elif y == i:
-                    lista_wychodzacych.append(x)
-            for li in lista_wychodzacych:
-                if slownik_kolorow[li] == kolor:
-                    kolor += 1
-            slownik_kolorow[i] = kolor
-            lista_wychodzacych = []
-            kolor = 1
+                    lista_kolorow_sasiadow.append(slownik_kolorow[x])
+            lista_kolorow_sasiadow.sort()
+            for k in range(1, lista_kolorow_sasiadow[-1] + 2):
+                if k not in lista_kolorow_sasiadow:
+                    slownik_kolorow[i] = k
+                    break
+            lista_kolorow_sasiadow = []
+        for [x,y] in self.macierz:
+            if slownik_kolorow [x] == slownik_kolorow[y]:
+                print("Cos jest nie tak")
         return slownik_kolorow
 
     def __init__(self, macierz, lista_wierzcholkow=None, slownik_kolorow=None):  # inicjalizacja grafu
@@ -36,29 +38,37 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
         elif (lista_wierzcholkow == None):
             self.macierz = macierz
             self.slownik_kolorow = slownik_kolorow
-            self.lista_bledow = self.szukanie_bledow
+            self.lista_bledow = []
+            self.lista_bledow = self.szukanie_bledow()
             Graf.lista_grafow.append(self)
-
-    def szukanie_bledow(self):
-        lista_blednych = []
-        for [x, y] in self.macierz:
-            if (x not in lista_blednych or y not in lista_blednych):
-                continue
-            if (self.slownik_kolorow[x] == self.slownik_kolorow[y]):
-                lista_blednych.append(y)
-        return lista_blednych
 
     def kolorowanie_jednego(self, wierzcholek):
         lista_kolor = []
         for [x, y] in self.macierz:
-            if (wierzcholek == x):
+            if (wierzcholek == x and self.slownik_kolorow[y] not in lista_kolor):
                 lista_kolor.append(self.slownik_kolorow[y])
-            elif (wierzcholek == y):
+            elif (wierzcholek == y and self.slownik_kolorow[x] not in lista_kolor):
                 lista_kolor.append(self.slownik_kolorow[x])
         lista_kolor.sort()
-        for i in range(1,len(lista_kolor)+1):
+        #print ("lista kolorow: ",lista_kolor)
+        for i in range(1,lista_kolor[-1]+2):
             if (i not in lista_kolor):
+               # print("stary: ",self.slownik_kolorow[wierzcholek],"nowy:",i, )
                 self.slownik_kolorow[wierzcholek]=i
+                break
+
+    def szukanie_bledow(self):
+        lista_bledow = []
+        for [x, y] in self.macierz:
+            if (x in lista_bledow or y in lista_bledow):
+                continue
+            if (self.slownik_kolorow[x] == self.slownik_kolorow[y]):
+                lista_bledow.append(y)
+        lista_bledow.sort()
+        print(40 * "*")
+        for i in lista_bledow:
+            self.kolorowanie_jednego(i)
+        return lista_bledow
 
     @staticmethod
     def ilosc_kolorow(graf1):  # zwraca ilosc kolorow danego grafu
@@ -76,6 +86,11 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
     def odrzucanie_populacji(wspolczynnik):  # odrzucamy wspolczynnik*100% najgorszych grafow (z najwieksza iloscia kolorow)
         Graf.sortowanie_populacji()
         Graf.lista_grafow = Graf.lista_grafow[0:round(len(Graf.lista_grafow) * (1 - wspolczynnik))]
+
+    @staticmethod
+    def odrzucanie_ilosci(wspolczynnik):
+        Graf.sortowanie_populacji()
+        Graf.lista_grafow = Graf.lista_grafow[0:min(wspolczynnik,len(Graf.lista_grafow))]
 
     @staticmethod
     def krzyzowanie(graf1, graf2):  # metoda krzyzujaca dwa grafy
