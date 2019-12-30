@@ -109,7 +109,7 @@ while (NB < MAX and NC < grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[0])): 
     print("NB: ",NB,"\nKOLEJNA ITERACJA\n\n")
     print (100*'-')
 
-for i in range(5):
+for i in range(len(grafy.Graf.lista_grafow)):
     grafy.Graf.lista_grafow[i].error_correcting()
 
 grafy.Graf.sortowanie_koncowe()
