@@ -10,9 +10,9 @@ slownik = {}  # wierzcholek:kolor
 n = 0  # ilosc wierzcholkow
 lista_posortowanych = []
 plik_z_krawedziami = 'graff0.3.txt'
-szansa_mutacji = 0.02
-MAX = 10  # limit of the iterations
-populacja_poczatkowa = 10  # ilosc osobnikow w populacji losowej
+szansa_mutacji = 0.1
+MAX = 20  # limit of the iterations
+populacja_poczatkowa = 20  # ilosc osobnikow w populacji losowej
 NC = 0  # najlepsza wartosc jaka chcemy osiagnac
 NB = 0  # ilosc wykonanych iteracji
 wspolczynnik_odrzucenia = 0.2
@@ -21,13 +21,13 @@ def lista_kolorow(slownik_kolorow):  # zwraca tablice kolorow
     a = [i for i in slownik_kolorow.values()]
     return a
 
-def parent_selection1(self):
+def parent_selection1():
     parents = []
     for _ in range(2):
-        a = random.randint(len(grafy.Graf.lista_grafow))
-        b = random.randint(len(grafy.Graf.lista_grafow))
+        a = random.randint(0,len(grafy.Graf.lista_grafow)-1)
+        b = random.randint(0,len(grafy.Graf.lista_grafow)-1)
         while a == b:
-            b = random.randint(len(grafy.Graf.lista_grafow))
+            b = random.randint(0,len(grafy.Graf.lista_grafow)-1)
         if grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[a]) > grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[b]):
             parent = grafy.Graf.lista_grafow[a]
         else:
@@ -75,14 +75,14 @@ for x in posortowane_wierzcholki:
 # zachlanny ulepszony, użycie Graf.py
 graf2 = grafy.Graf(macierz = macierz, lista_wierzcholkow=lista_1_do_n)
 graf1 = grafy.Graf(macierz = macierz, lista_wierzcholkow=lista_posortowanych)
-print("Ilosc kolorow: ", grafy.Graf.ilosc_kolorow(graf2),"\nGRAF ZACHLANNY:",graf2.slownik_kolorow,"\nSUMA KWADRATOW KOLOROW:",grafy.Graf.fitting(graf2))
-print("Ilosc kolorow dla listy posortowanej: ", grafy.Graf.ilosc_kolorow(graf1),"\nGRAF POSORTOWANY: ",graf1.slownik_kolorow)
+print("Ilosc kolorow: ", grafy.Graf.ilosc_kolorow(graf2),"\nGRAF ZACHLANNY:",graf2.slownik_kolorow,"\nSUMA KWADRATOW KOLOROW:",grafy.Graf.fitting(graf2),"\nfitting:",grafy.Graf.selection_operator(graf2))
+print("Ilosc kolorow dla listy posortowanej: ", grafy.Graf.ilosc_kolorow(graf1),"\nGRAF POSORTOWANY: ",graf1.slownik_kolorow,"\nfitting:",grafy.Graf.selection_operator(graf1))
 
 #cialo algorytmu genetycznego
 #populacja poczatkowa- kolorowanie na podstawie listy kolejnych wierzcholkow zaczynajacych sie od kolejnych nieparzystych wierzcholkow
 for i in range(populacja_poczatkowa):
     lista_z_wierzcholkami = [i for i in range(1,n+1)]
-    for j in range(1,2*i+2):
+    for j in range(1,3*i+2):
         lista_z_wierzcholkami.remove(j)
         lista_z_wierzcholkami.append(j)
     graf = grafy.Graf(macierz = macierz, lista_wierzcholkow=lista_z_wierzcholkami)  # inicjalizacja nowego grafu
@@ -99,13 +99,11 @@ for i in grafy.Graf.lista_grafow:
 
 while (NB < MAX):  # petla konczy sie po wykonaniu MAX ieracji lub po osiagnieciu celu
     #M = [[random.randint(1,100) for i in range((len(grafy.Graf.lista_grafow)))] for j in range(len(grafy.Graf.lista_grafow))]
-    parent1 = random.randint(0,5)
-    parent2 = random.randint(0,5)
-    while(parent1==parent2):
-        parent2 = random.randint(0,5)
+    parents = parent_selection1()
 
-    najlepszy_graf = grafy.Graf.lista_grafow[parent1]
-    najlepszy_graf2 = grafy.Graf.lista_grafow[parent2]
+
+    najlepszy_graf = parents[0]
+    najlepszy_graf2 = parents[1]
 
     nowy_graf = grafy.Graf.krzyzowanie(najlepszy_graf, najlepszy_graf2)
     if (random.randint(1, 100) <= szansa_mutacji * 100):
@@ -132,6 +130,7 @@ while (NB < MAX):  # petla konczy sie po wykonaniu MAX ieracji lub po osiagnieci
     print (100*'-')
 
 for i in range(len(grafy.Graf.lista_grafow)):
+    print (grafy.Graf.lista_grafow[i].lista_bledow)
     grafy.Graf.lista_grafow[i].error_correcting()
 
 grafy.Graf.sortowanie_koncowe()
@@ -140,5 +139,3 @@ for i in range(5):
     print("graf nr:",i,"ilosc kolorow:",grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[i]),"suma:",grafy.Graf.fitting(grafy.Graf.lista_grafow[i]),grafy.Graf.lista_grafow[i].slownik_kolorow)
     grafy.Graf.lista_grafow[i].check()
     print("-----")
-
-

@@ -77,8 +77,9 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
                     break
         else:
             usuniete = False
-            for i in range(1,Graf.ilosc_kolorow(self)//2):
+            for i in range(1,self.slownik_kolorow[wierzcholek]):
                 if (i not in lista_kolor):
+                    print("stary: ",self.slownik_kolorow[wierzcholek],"nowy:",i)
                     self.slownik_kolorow[wierzcholek]=i
                     usuniete = True
                     break
@@ -137,8 +138,16 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
         return suma
 
     @staticmethod
+    def selection_operator(graf): #liczy jakosc grafow ze specjalnego wzoru
+        suma = graf.ilosc_kolorow(graf) + len(graf.lista_bledow) * 2
+        if len(graf.lista_bledow)>0:
+            suma+=1
+        return suma
+
+    @staticmethod
     def sortowanie_populacji():
         Graf.lista_grafow.sort(key=Graf.fitting)
+        #Graf.lista_grafow.sort(key=Graf.selection_operator)
 
     @staticmethod
     def sortowanie_koncowe():
@@ -163,18 +172,21 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
                 slownik[x] = graf1.slownik_kolorow[x]
             else:
                 slownik[x] = graf2.slownik_kolorow[x]
-        """
-        exist = False
+        exist = True
         for graf in Graf.lista_grafow:
-            if graf.slownik_kolorow == slownik:
-                print("grafy sa takie same!")
-                exist = True
-        if exist == False:
+            for x in range(1,len(graf1.macierz)+1):
+                if slownik[x]==graf.slownik_kolorow[x]:
+                    exist = False
+                    break
+            if exist == False:
+                break
+        if exist == True:
+            print ("Taki sam slownik!")
+        else:
             nowy_graf = Graf(macierz = graf1.macierz, slownik_kolorow=slownik)
             return nowy_graf
-        """
-        nowy_graf = Graf(macierz=graf1.macierz, slownik_kolorow=slownik)
-        return nowy_graf
+
+        #return nowy_graf
 
     def mutacja(self):
         """
