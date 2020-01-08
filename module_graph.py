@@ -87,6 +87,7 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
 
     def szukanie_bledow(self):
         lista_bledow = []
+        lista_poprawionych = []
         slownik_bledow = {}
         lista_posortowanych = []
         for x in range(len(self.macierz)):
@@ -100,7 +101,11 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
         for wierzcholek in lista_bledow:
             naprawa = self.kolorowanie_jednego(wierzcholek,False)
             if naprawa:
-                lista_bledow.remove(wierzcholek)
+                lista_poprawionych.append(wierzcholek)
+
+        for x in lista_poprawionych:
+            if x in lista_bledow:
+                lista_bledow.remove(x)
 
         for kolor in lista_bledow:
             ilosc_sasiadow = 0
@@ -213,4 +218,3 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
                 if self.macierz[x][y]:
                     if (self.slownik_kolorow[x + 1] == self.slownik_kolorow[y + 1]):
                         print("SASIEDZI MAJA TAKIE SAME KOLORY!",x+1,y+1)
-            break
