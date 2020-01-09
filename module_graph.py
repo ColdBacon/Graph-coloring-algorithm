@@ -65,7 +65,7 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
         #print("zmiana koloru dla wierzcholka:",wierzcholek)
         lista_kolor = []
         for j in range(len(self.macierz[wierzcholek-1])):
-            if self.macierz[wierzcholek-1][j]:
+            if self.macierz[wierzcholek-1][j] and j+1 not in self.lista_bledow:
                 lista_kolor.append(self.slownik_kolorow[j + 1])
         lista_kolor.sort()
         #print ("lista kolorow: ",lista_kolor)
@@ -87,7 +87,6 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
 
     def szukanie_bledow(self):
         lista_bledow = []
-        lista_poprawionych = []
         slownik_bledow = {}
         lista_posortowanych = []
         for x in range(len(self.macierz)):
@@ -98,14 +97,14 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
                     if (self.slownik_kolorow[x+1] == self.slownik_kolorow[y+1]):
                         lista_bledow.append(y+1)
 
-        for wierzcholek in lista_bledow:
-            naprawa = self.kolorowanie_jednego(wierzcholek,False)
-            if naprawa:
-                lista_poprawionych.append(wierzcholek)
+        index = 0
 
-        for x in lista_poprawionych:
-            if x in lista_bledow:
-                lista_bledow.remove(x)
+        for i in range(len(lista_bledow)):
+            naprawa = self.kolorowanie_jednego(lista_bledow[index],False)
+            if naprawa:
+                lista_bledow.remove(lista_bledow[index])
+            else:
+                index+=1
 
         for kolor in lista_bledow:
             ilosc_sasiadow = 0
@@ -122,9 +121,10 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
         return lista_posortowanych
 
     def error_correcting(self):
-        self.lista_bledow = self.szukanie_bledow()
-        for error in self.lista_bledow:
-            self.kolorowanie_jednego(error,True)
+            self.lista_bledow = self.szukanie_bledow()
+            for i in range(len(self.lista_bledow)):
+                self.kolorowanie_jednego(self.lista_bledow[0],True)
+                self.lista_bledow.remove(self.lista_bledow[0])
 
     @staticmethod
     def ilosc_kolorow(graf1):  # zwraca ilosc kolorow danego grafu

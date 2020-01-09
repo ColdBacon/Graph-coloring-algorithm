@@ -9,7 +9,7 @@ macierz = []
 slownik = {}  # wierzcholek:kolor
 n = 0  # ilosc wierzcholkow
 lista_posortowanych = []
-plik_z_krawedziami = 'graff0.3.txt'
+plik_z_krawedziami = 'graff0.8.txt'
 szansa_mutacji = 0.1
 MAX = 20  # limit of the iterations
 populacja_poczatkowa = 20  # ilosc osobnikow w populacji losowej
@@ -132,8 +132,12 @@ while (NB < MAX):  # petla konczy sie po wykonaniu MAX ieracji lub po osiagnieci
 for i in range(len(grafy.Graf.lista_grafow)):
     print (grafy.Graf.lista_grafow[i].lista_bledow)
     grafy.Graf.lista_grafow[i].error_correcting()
+    grafy.Graf.lista_grafow[i].lista_bledow = grafy.Graf.lista_grafow[i].szukanie_bledow()
+    print (grafy.Graf.lista_grafow[i].lista_bledow)
+    grafy.Graf.lista_grafow[i].check()
 
 grafy.Graf.sortowanie_koncowe()
+
 
 for i in range(5):
     print("graf nr:",i,"ilosc kolorow:",grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[i]),"suma:",grafy.Graf.fitting(grafy.Graf.lista_grafow[i]),grafy.Graf.lista_grafow[i].slownik_kolorow)
