@@ -17,7 +17,7 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
             self.macierz = macierz
             self.slownik_kolorow = slownik_kolorow
             self.lista_bledow = []
-            self.lista_bledow = self.szukanie_bledow()
+            self.szukanie_bledow()
             Graf.lista_grafow.append(self)
 
     def kolorowanie_tablica(self,lista_wierzcholkow):  # funkcja kolorujaca zachlannie i zwracajaca slownik {indeks_wierzcholka:numer_koloru}
@@ -65,8 +65,13 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
         #print("zmiana koloru dla wierzcholka:",wierzcholek)
         lista_kolor = []
         for j in range(len(self.macierz[wierzcholek-1])):
-            if self.macierz[wierzcholek-1][j] and j+1 not in self.lista_bledow:
-                lista_kolor.append(self.slownik_kolorow[j + 1])
+            if self.macierz[wierzcholek-1][j]:
+                if j+1 in self.lista_bledow:
+                    #print ("wierzcholek",j+1,"jest w liscie bledow:",self.lista_bledow)
+                    pass
+                else:
+                    lista_kolor.append(self.slownik_kolorow[j + 1])
+
         lista_kolor.sort()
         #print ("lista kolorow: ",lista_kolor)
         if value:
@@ -79,7 +84,7 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
             usuniete = False
             for i in range(1,self.slownik_kolorow[wierzcholek]):
                 if (i not in lista_kolor):
-                    print("stary: ",self.slownik_kolorow[wierzcholek],"nowy:",i)
+                    #print("stary: ",self.slownik_kolorow[wierzcholek],"nowy:",i)
                     self.slownik_kolorow[wierzcholek]=i
                     usuniete = True
                     break
@@ -101,6 +106,7 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
 
         for i in range(len(lista_bledow)):
             naprawa = self.kolorowanie_jednego(lista_bledow[index],False)
+            print (lista_bledow[index],index,i)
             if naprawa:
                 lista_bledow.remove(lista_bledow[index])
             else:
@@ -118,13 +124,16 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
             lista_posortowanych.append(x[0])
 
         #lista_bledow.sort()
-        return lista_posortowanych
+        self.lista_bledow = lista_posortowanych
 
     def error_correcting(self):
-            self.lista_bledow = self.szukanie_bledow()
+            #self.lista_bledow = self.szukanie_bledow()
+            #print("lista_bledow przed error_correcting", self.lista_bledow)
             for i in range(len(self.lista_bledow)):
                 self.kolorowanie_jednego(self.lista_bledow[0],True)
+                #print ("usuwam wierzcholek",self.lista_bledow[0]," z listy bledow",self.lista_bledow)
                 self.lista_bledow.remove(self.lista_bledow[0])
+            #print("lista_bledow po error_correcting", self.lista_bledow)
 
     @staticmethod
     def ilosc_kolorow(graf1):  # zwraca ilosc kolorow danego grafu
@@ -218,3 +227,4 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
                 if self.macierz[x][y]:
                     if (self.slownik_kolorow[x + 1] == self.slownik_kolorow[y + 1]):
                         print("SASIEDZI MAJA TAKIE SAME KOLORY!",x+1,y+1)
+                        raise ValueError("Jest problem")
