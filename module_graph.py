@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 import random
-import numpy as np
 from itertools import permutations
 
 class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
@@ -53,34 +52,47 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
                     lista_kolorow_sasiadow.append(slownik_kolorow[j+1])
             #print("lista kolorow: ",lista_kolorow_sasiadow)
             lista_kolorow_sasiadow.sort()
-            for k in range(1, lista_kolorow_sasiadow[-1] + 2):
-                if k not in lista_kolorow_sasiadow:
-                    slownik_kolorow[i] = k
-                    break
+            if len(lista_kolorow_sasiadow)>0:
+                for k in range(1, lista_kolorow_sasiadow[-1] + 2):
+                    if k not in lista_kolorow_sasiadow:
+                        slownik_kolorow[i] = k
+                        break
+            else:
+                slownik_kolorow[i]=1
             lista_kolorow_sasiadow = []
 
         return slownik_kolorow
 
     def kolorowanie_jednego(self, wierzcholek,value):
         #print("zmiana koloru dla wierzcholka:",wierzcholek)
-        lista_kolor = []
-        for j in range(len(self.macierz[wierzcholek-1])):
-            if self.macierz[wierzcholek-1][j]:
-                if j+1 in self.lista_bledow:
-                    #print ("wierzcholek",j+1,"jest w liscie bledow:",self.lista_bledow)
-                    pass
-                else:
-                    lista_kolor.append(self.slownik_kolorow[j + 1])
-
-        lista_kolor.sort()
         #print ("lista kolorow: ",lista_kolor)
         if value:
+            lista_kolor = []
+            if self.lista_bledow ==None:
+                self.lista_bledow = []
+            for j in range(len(self.macierz[wierzcholek-1])):
+                if self.macierz[wierzcholek-1][j]:
+                    if j+1 in self.lista_bledow:
+                        #print ("wierzcholek",j+1,"jest w liscie bledow:",self.lista_bledow)
+                        pass
+                    else:
+                        lista_kolor.append(self.slownik_kolorow[j + 1])
+
+            lista_kolor.sort()
             for i in range(1,lista_kolor[-1]+2):
                 if (i not in lista_kolor):
                     #print("stary: ",self.slownik_kolorow[wierzcholek],"nowy:",i)
                     self.slownik_kolorow[wierzcholek]=i
                     break
         else:
+            lista_kolor = []
+            if self.lista_bledow ==None:
+                self.lista_bledow = []
+            for j in range(len(self.macierz[wierzcholek-1])):
+                if self.macierz[wierzcholek-1][j]:
+                    lista_kolor.append(self.slownik_kolorow[j + 1])
+
+            lista_kolor.sort()
             usuniete = False
             for i in range(1,self.slownik_kolorow[wierzcholek]):
                 if (i not in lista_kolor):
@@ -106,7 +118,7 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
 
         for i in range(len(lista_bledow)):
             naprawa = self.kolorowanie_jednego(lista_bledow[index],False)
-            print (lista_bledow[index],index,i)
+            # (lista_bledow[index],index,i)
             if naprawa:
                 lista_bledow.remove(lista_bledow[index])
             else:
@@ -124,7 +136,10 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
             lista_posortowanych.append(x[0])
 
         #lista_bledow.sort()
-        self.lista_bledow = lista_posortowanych
+        if lista_posortowanych == None:
+            self.lista_bledow = []
+        else:
+            self.lista_bledow = lista_posortowanych
 
     def error_correcting(self):
             #self.lista_bledow = self.szukanie_bledow()
@@ -226,5 +241,7 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
             for y in range(len(self.macierz)):
                 if self.macierz[x][y]:
                     if (self.slownik_kolorow[x + 1] == self.slownik_kolorow[y + 1]):
+                        self.szukanie_bledow()
                         print("SASIEDZI MAJA TAKIE SAME KOLORY!",x+1,y+1)
+                        print(self.lista_bledow)
                         raise ValueError("Jest problem")

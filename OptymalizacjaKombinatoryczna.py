@@ -9,8 +9,8 @@ macierz = []
 slownik = {}  # wierzcholek:kolor
 n = 0  # ilosc wierzcholkow
 lista_posortowanych = []
-plik_z_krawedziami = 'graff0.3.txt'
-szansa_mutacji = 0.1
+plik_z_krawedziami = 'gc500.txt'
+szansa_mutacji = 0.02
 MAX = 20  # limit of the iterations
 populacja_poczatkowa = 20  # ilosc osobnikow w populacji losowej
 NC = 0  # najlepsza wartosc jaka chcemy osiagnac
@@ -73,25 +73,25 @@ for x in posortowane_wierzcholki:
     lista_posortowanych.append(x[0])
 
 # zachlanny ulepszony, użycie Graf.py
-graf2 = grafy.Graf(macierz = macierz, lista_wierzcholkow=lista_1_do_n)
-graf1 = grafy.Graf(macierz = macierz, lista_wierzcholkow=lista_posortowanych)
-print("Ilosc kolorow: ", grafy.Graf.ilosc_kolorow(graf2),"\nGRAF ZACHLANNY:",graf2.slownik_kolorow,"\nSUMA KWADRATOW KOLOROW:",grafy.Graf.fitting(graf2),"\nfitting:",grafy.Graf.selection_operator(graf2))
-print("Ilosc kolorow dla listy posortowanej: ", grafy.Graf.ilosc_kolorow(graf1),"\nGRAF POSORTOWANY: ",graf1.slownik_kolorow,"\nfitting:",grafy.Graf.selection_operator(graf1))
+grafzachlanny = grafy.Graf(macierz = macierz, lista_wierzcholkow=lista_1_do_n)
+grafposortowany = grafy.Graf(macierz = macierz, lista_wierzcholkow=lista_posortowanych)
+print("Ilosc kolorow: ", grafy.Graf.ilosc_kolorow(grafzachlanny),"\nGRAF ZACHLANNY:",grafzachlanny.slownik_kolorow,"\nSUMA KWADRATOW KOLOROW:",grafy.Graf.fitting(grafzachlanny),"\nfitting:",grafy.Graf.selection_operator(grafzachlanny))
+print("Ilosc kolorow dla listy posortowanej: ", grafy.Graf.ilosc_kolorow(grafposortowany),"\nGRAF POSORTOWANY: ",grafposortowany.slownik_kolorow,"\nfitting:",grafy.Graf.selection_operator(grafposortowany))
 
 #cialo algorytmu genetycznego
 #populacja poczatkowa- kolorowanie na podstawie listy kolejnych wierzcholkow zaczynajacych sie od kolejnych nieparzystych wierzcholkow
 for i in range(populacja_poczatkowa):
     lista_z_wierzcholkami = [i for i in range(1,n+1)]
-    for j in range(1,3*i+2):
+    for j in range(1,1*i+2):
         lista_z_wierzcholkami.remove(j)
         lista_z_wierzcholkami.append(j)
     graf = grafy.Graf(macierz = macierz, lista_wierzcholkow=lista_z_wierzcholkami)  # inicjalizacja nowego grafu
 
 grafy.Graf.odrzucanie_populacji(0.2)  # sortowanie populacji jest zapewnione poprzez wywolanie funkcji sortowanie_populacji wewnatrz odrzucanie_populacji
 
-print("Populacja poczatkowa: ")
-for i in range(len(grafy.Graf.lista_grafow)):
-    print("graf nr:", i,grafy.Graf.lista_grafow[i].slownik_kolorow)
+#print("Populacja poczatkowa: ")
+#for i in range(len(grafy.Graf.lista_grafow)):
+    #print("graf nr:", i,grafy.Graf.lista_grafow[i].slownik_kolorow)
 
 #zmienic na sume kwadratow kolorow
 for i in grafy.Graf.lista_grafow:
@@ -117,8 +117,8 @@ while (NB < MAX):  # petla konczy sie po wykonaniu MAX ieracji lub po osiagnieci
         nowy_graf2.szukanie_bledow()
 
     grafy.Graf.odrzucanie_ilosci(40)
-    for i in range(len(grafy.Graf.lista_grafow)):
-        print("graf nr:",i,"ilosc kolorow:",grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[i]),grafy.Graf.lista_grafow[i].slownik_kolorow)
+    #for i in range(len(grafy.Graf.lista_grafow)):
+        #print("graf nr:",i,"ilosc kolorow:",grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[i]),grafy.Graf.lista_grafow[i].slownik_kolorow)
     print("dlugosc listy: ",len(grafy.Graf.lista_grafow))
     print("ilosc kolorow: ",grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[0]))
     print("\nNAJLEPSZE GRAFY:")
@@ -143,3 +143,6 @@ for i in range(5):
     print("graf nr:",i,"ilosc kolorow:",grafy.Graf.ilosc_kolorow(grafy.Graf.lista_grafow[i]),"suma:",grafy.Graf.fitting(grafy.Graf.lista_grafow[i]),grafy.Graf.lista_grafow[i].slownik_kolorow)
     #grafy.Graf.lista_grafow[i].check()
     print("-----")
+
+print("Ilosc kolorow dla algorytmu zachlannego:", grafy.Graf.ilosc_kolorow(grafzachlanny))
+print("Ilosc kolorow dla LF:", grafy.Graf.ilosc_kolorow(grafposortowany))
