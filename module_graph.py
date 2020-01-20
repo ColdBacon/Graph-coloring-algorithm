@@ -19,27 +19,7 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
             self.szukanie_bledow()
             Graf.lista_grafow.append(self)
 
-    def kolorowanie_tablica(self,lista_wierzcholkow):  # funkcja kolorujaca zachlannie i zwracajaca slownik {indeks_wierzcholka:numer_koloru}
-        lista_kolorow_sasiadow = []  # lista z wierzcholkami polaczonymi z jednym wierzcholkiem do którego dobieramy kolor
-        slownik_kolorow = {}
-        for i in range(1, len(lista_wierzcholkow) + 1):
-            slownik_kolorow[i] = 0
-        for i in lista_wierzcholkow:
-            for [x, y] in self.lista_krawedzi:
-                if x == i:
-                    lista_kolorow_sasiadow.append(slownik_kolorow[y])
-                elif y == i:
-                    lista_kolorow_sasiadow.append(slownik_kolorow[x])
-            lista_kolorow_sasiadow.sort()
-            for k in range(1, lista_kolorow_sasiadow[-1] + 2):
-                if k not in lista_kolorow_sasiadow:
-                    slownik_kolorow[i] = k
-                    break
-            lista_kolorow_sasiadow = []
-        for [x,y] in self.lista_krawedzi:
-            if slownik_kolorow [x] == slownik_kolorow[y]:
-                print("WIERZCHOLKI SASIEDNIE MAJA TAKIE SAME KOLORY!")
-        return slownik_kolorow
+
 
     def kolorowanie_macierz(self,lista_wierzcholkow):
         lista_kolorow_sasiadow = []  # lista z wierzcholkami polaczonymi z jednym wierzcholkiem do którego dobieramy kolor
@@ -197,7 +177,7 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
         slownik = {}
         dzielnik = random.randint(2,4)
         for x in range(1, len(graf1.slownik_kolorow) + 1):
-            if (x < (len((graf1.slownik_kolorow)) // dzielnik) + 1): #or x>2*(len((graf1.slownik_kolorow)) // dzielnik)):
+            if (x < (len((graf1.slownik_kolorow)) // dzielnik) + 1 or x>2*(len((graf1.slownik_kolorow)) // dzielnik)):
                 slownik[x] = graf1.slownik_kolorow[x]
             else:
                 slownik[x] = graf2.slownik_kolorow[x]
@@ -245,3 +225,22 @@ class Graf:  # klasa graf przechowuje pokolorowane wierzcholki grafu
                         print("SASIEDZI MAJA TAKIE SAME KOLORY!",x+1,y+1)
                         print(self.lista_bledow)
                         raise ValueError("Jest problem")
+
+    def sprawdzanie_kolorowania(self,max_kolor):
+        lista_powy_max_kolor =[]
+        lista_kolorow = []
+        lista_pozostalych_kolorow = []
+        for i in range(1,len(self.macierz)+1):
+            if self.slownik_kolorow[i]>max_kolor:
+                lista_powy_max_kolor.append(i)
+        for j in lista_powy_max_kolor:
+            for k in range(len(self.macierz)):
+                if self.macierz[j-1][k]:
+                    lista_kolorow.append(self.slownik_kolorow[k+1])
+            for l in range(1,self.slownik_kolorow[j]):
+                if l not in lista_kolorow:
+                    lista_pozostalych_kolorow.append(l)
+            #print (j,lista_pozostalych_kolorow)
+            lista_pozostalych_kolorow=[]
+            lista_kolorow=[]
+
